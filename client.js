@@ -7,7 +7,9 @@ import configureStore from './app/store/configure-store';
 
 const store = configureStore({
   todos: [{
-    name: 'Test'
+    name: 'Work out server side rendering'
+  }, {
+    name: 'Write an awesome app'
   }]
 });
 const history = syncHistoryWithStore(browserHistory, store);
