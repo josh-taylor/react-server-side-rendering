@@ -1,21 +1,25 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
+import React, {Component} from 'react';
+import {Link} from 'react-router';
 
-class App extends Component {
+const App = ({ children }) => {
+  return <section>
+    <nav className="nav has-shadow">
+      <div className="nav-left">
+        <Link to="/" className="nav-item is-brand">
+          Server Side Rendering
+        </Link>
+      </div>
 
-    render() {
-        return <section>
-            <h1>My awesome app</h1>
+      <div className="nav-right">
+        <Link to="/" className="nav-item">Home</Link>
+        <Link to="/about" className="nav-item">About</Link>
+      </div>
+    </nav>
 
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/about">About</Link></li>
-            </ul>
-
-            {this.props.children}
-        </section>
-    }
-
+    <section className="section">
+      <section className="container">{children}</section>
+    </section>
+  </section>
 }
 
 export default App;

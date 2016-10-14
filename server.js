@@ -1,11 +1,10 @@
 import express from 'express';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { match, RouterContext, browserHistory } from 'react-router';
-import { syncHistoryWithStore } from 'react-router-redux';
-import Root from './app/containers/Root';
+import { match, RouterContext } from 'react-router';
+import { Provider } from 'react-redux';
 import routes from './app/routes';
-import createStore from './app/store/configure-store';
+import configureStore from './app/store/configure-store';
 
 const app = express();
 
@@ -13,25 +12,29 @@ app.use(express.static('public'));
 
 app.use((req, res, next) => {
     match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
-        if (error) {
-            res.status(500).send(error.message);
-        } else if (redirectLocation) {
-            res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-        } else if (renderProps) {
-            const store = createStore();
+      if (error) {
+        res.status(500)
+      } else if (redirectLocation) {
+        res.redirect(302, redirectLocation.pathName + redirectLocation.search)
+      } else if (renderProps) {
+        const store = configureStore({
+          todos: [{
+            name: 'Work out server side rendering'
+          }, {
+            name: 'Write an awesome app'
+          }]
+        });
 
-            const history = syncHistoryWithStore(renderProps.history, store);
+        const html = renderToString(
+          <Provider store={store}>
+            <RouterContext {...renderProps} />
+          </Provider>
+        );
 
-            const html = renderToString(
-                <Root store={store} history={history}/>
-            );
-
-            const initialState = store.getState();
-
-            renderFullPage(html, initialState);
-        } else {
-            res.status(404).send('Not found');
-        }
+        res.status(200).send(renderFullPage(html, store.getState()))
+      } else {
+        res.status(404).send('Not Found')
+      }
     });
 });
 
@@ -41,11 +44,12 @@ function renderFullPage(html, initialState) {
         <html>
             <head>
                 <title>Server Side Rendering Test</title>
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.2.1/css/bulma.min.css" rel="stylesheet" type="text/css">
             </head>
             <body>
                 <div id="root">${html}</div>
                 <script>
-                    window.__INITIAL_STATE__ = ${JSON.stringify(initialState)};
+                    window.__PRELOADED_STATE__ = ${JSON.stringify(initialState)};
                 </script>
                 <script src="/js/app.js"></script>
             </body>

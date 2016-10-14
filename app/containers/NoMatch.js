@@ -1,11 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-class NoMatch extends Component {
-
-    render() {
-        return <h1>No match lolz</h1>
-    }
-
+const NoMatch = () => {
+  return <h1 className="title">No match lolz</h1>
 }
 
 export default NoMatch;

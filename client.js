@@ -5,7 +5,11 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import Root from './app/containers/Root';
 import configureStore from './app/store/configure-store';
 
-const store = configureStore();
+const store = configureStore({
+  todos: [{
+    name: 'Test'
+  }]
+});
 const history = syncHistoryWithStore(browserHistory, store);
 
 render(
